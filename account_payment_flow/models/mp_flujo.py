@@ -1,17 +1,22 @@
-from odoo import fields, models
-
+from odoo import models, fields, api
 
 class MpFlujo(models.Model):
     _name = 'mp.flujo'
     _rec_name = "display_name"
 
-    codigo = fields.Char()
-    grupo_flujo_ids = fields.Many2many(comodel_name="mp.grupo.flujo", relation="mp_flujo_grupo_rel", column1="flujo_id",
-                                       column2="grupo_flujo_id")
-    decripcion = fields.Text()
-    display_name = fields.Text(compute="_compute_display_name")
-    mp_grupo_flujo_id = fields.Many2one(comodel_name="mp.grupo.flujo")
+    codigo = fields.Char(string="Código")
+    grupo_flujo_ids = fields.Many2many(
+        comodel_name="mp.grupo.flujo",
+        relation="mp_flujo_grupo_rel",
+        column1="flujo_id",
+        column2="grupo_flujo_id",
+        string="Grupos de Flujo"
+    )
+    decripcion = fields.Text(string="Descripción")
+    display_name = fields.Char(compute="_compute_display_name", string="Nombre de Visualización", store=True)
+    mp_grupo_flujo_id = fields.Many2one(comodel_name="mp.grupo.flujo", string="Grupo de Flujo")
 
+    @api.depends('codigo', 'decripcion')
     def _compute_display_name(self):
-        for flujo_id in self:
-            flujo_id.display_name = str(flujo_id.codigo) + str(": ") + str(flujo_id.decripcion)
+        for flujo in self:
+            flujo.display_name = f"{flujo.codigo}: {flujo.decripcion}"

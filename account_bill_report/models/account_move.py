@@ -6,3 +6,4 @@ class AccountMove(models.Model):
 
     # Custom fields and methods adjustments for Odoo 17
     bill_date = fields.Date(string='Bill Date')
+    
