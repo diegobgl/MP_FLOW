@@ -1,5 +1,3 @@
-
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_account_move_tree" model="ir.ui.view">
         <field name="name">account.move.tree</field>
