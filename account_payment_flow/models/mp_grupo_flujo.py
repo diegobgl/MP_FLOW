@@ -19,6 +19,13 @@ class MpGrupoFlujo(models.Model):
         inverse_name="mp_grupo_flujo_id",
         string="Flujos Relacionados"
     )
+    flujo_ids = fields.Many2many(
+        comodel_name="mp.flujo",
+        relation="mp_grupo_flujo_rel",  # Usa un nombre de relación diferente
+        column1="grupo_flujo_id",
+        column2="flujo_id",
+        string="Flujos"
+    )
     # Removing compute as it was incorrectly designed for the One2many logic
     # The One2many should rely on the correct inverse relation instead of compute
 
