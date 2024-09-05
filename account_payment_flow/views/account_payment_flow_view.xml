@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mp_flujo_tree" model="ir.ui.view">
+        <field name="name">mp.flujo.tree</field>
+        <field name="model">mp.flujo</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="codigo"/>
+                <field name="decripcion"/>
+                <field name="grupo_flujo_ids" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_grupo_flujo_form" model="ir.ui.view">
+        <field name="name">mp.grupo.flujo.form</field>
+        <field name="model">mp.grupo.flujo</field>
+        <field name="arch" type="xml">
+            <form string="MP Grupo Flujo">
+                <sheet>
+                    <group>
+                        <field name="nombre"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_flujo_form" model="ir.ui.view">
+        <field name="name">mp.flujo.form</field>
+        <field name="model">mp.flujo</field>
+        <field name="arch" type="xml">
+            <form string="MP Flujo">
+                <sheet>
+                    <group>
+                        <field name="codigo"/>
+                    </group>
+                    <group>
+                        <field name="decripcion"/>
+                    </group>
+                    <group>
+                        <field name="grupo_flujo_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mp_grupo_flujo_tree" model="ir.ui.view">
+        <field name="name">mp.grupo.flujo.tree</field>
+        <field name="model">mp.grupo.flujo</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="nombre"/>
+                <field name="flujo_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="ir_account_mp_flujo">
+        <field name="name">MP Flujo</field>
+        <field name="res_model">mp.flujo</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="ir_account_mp_grupo_flujo">
+        <field name="name">MP Grupo Flujo</field>
+        <field name="res_model">mp.grupo.flujo</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="account_mp_flujo_menu" parent="account.menu_finance_configuration"
+              name="Tesoreria" sequence="2"/>
+
+    <menuitem id="menu_action_account_mp_grupo_flujo"
+              name="MP Grupo Flujo"
+              action="ir_account_mp_grupo_flujo" parent="account_mp_flujo_menu"/>
+
+    <menuitem id="menu_action_account_mp_flujo"
+              name="MP Flujo"
+              action="ir_account_mp_flujo" parent="account_mp_flujo_menu"/>
+
+</odoo>
