@@ -69,7 +69,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="account_mp_flujo_menu" parent="account.menu_finance_configuration"
+    <menuitem id="account_mp_flujo_menu" parent="account.menu_accounting"
               name="Tesoreria" sequence="2"/>
 
     <menuitem id="menu_action_account_mp_grupo_flujo"
