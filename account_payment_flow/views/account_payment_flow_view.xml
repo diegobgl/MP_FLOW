@@ -72,24 +72,20 @@
 
     <!-- Menú Principal Reportes Control de Gestión -->
     <menuitem id="menu_reportes_control_gestion_root"
-              name="Reportes Control de Gestión"
+              name=" Control Flujos de pago"
               sequence="10"
               web_icon="fa-bar-chart"/>
 
-    <menuitem id="mp_gestion_menu" 
-              name="MP Gestion" 
-              parent="menu_reportes_control_gestion_root"
-              sequence="2"/>
 
     <menuitem id="account_mp_flujo_menu" parent="menu_reportes_control_gestion_root"
-              name="Tesoreria" sequence="2"/>
+              name="Flujos de pago" sequence="2"/>
 
     <menuitem id="menu_action_account_mp_grupo_flujo"
-              name="MP Grupo Flujo"
+              name="Grupo Flujo"
               action="ir_account_mp_grupo_flujo" parent="account_mp_flujo_menu"/>
 
     <menuitem id="menu_action_account_mp_flujo"
-              name="MP Flujo"
+              name="Flujo"
               action="ir_account_mp_flujo" parent="account_mp_flujo_menu"/>
 
 </odoo>
