@@ -3,5 +3,7 @@
     <!-- Menú Principal Reportes Control de Gestión -->
     <menuitem id="menu_reportes_control_gestion_root"
               name="Reportes Control de Gestión"
-              sequence="10"/>
+              sequence="10"
+              web_icon="fa-bar-chart"/>
+
 </odoo>

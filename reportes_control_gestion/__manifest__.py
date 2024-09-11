@@ -7,6 +7,7 @@
     'website': 'http://www.tuweb.com',
     'depends': ['base'],
     'data': [
+        'security/ir.model.access.csv',
         'views/menus.xml',
     ],
     'installable': True,
