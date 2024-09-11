@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_menu_reportes_control_gestion,access_menu_reportes_control_gestion,model_ir_ui_menu,base.group_user,1,0,0,0
