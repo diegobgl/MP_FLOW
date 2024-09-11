@@ -76,6 +76,11 @@
               sequence="10"
               web_icon="fa-bar-chart"/>
 
+    <menuitem id="mp_gestion_menu" 
+              name="MP Gestion" 
+              parent="menu_reportes_control_gestion_root"
+              sequence="2"/>
+
     <menuitem id="account_mp_flujo_menu" parent="menu_reportes_control_gestion_root"
               name="Tesoreria" sequence="2"/>
 
