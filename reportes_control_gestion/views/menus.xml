@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menú Principal Reportes Control de Gestión -->
+    <menuitem id="menu_reportes_control_gestion_root"
+              name="Reportes Control de Gestión"
+              sequence="10"/>
+</odoo>
