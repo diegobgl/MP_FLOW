@@ -11,7 +11,6 @@ class AccountPayment(models.Model):
     mpflujo = fields.Many2one('mp.flujo', string='Flujo')
     mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    @api.model
     def create(self, vals):
         # Validar que los valores de Flujo y Grupo de Flujo están presentes
         if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
