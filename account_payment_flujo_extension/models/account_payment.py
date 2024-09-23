@@ -6,7 +6,6 @@ class AccountPayment(models.Model):
     mpflujo = fields.Many2one('mp.flujo', string='Flujo')
     mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    @api.model
     def _create_payment_entry(self, amount):
         # Llamada al super para generar el asiento contable
         move = super(AccountPayment, self)._create_payment_entry(amount)
