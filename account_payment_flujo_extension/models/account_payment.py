@@ -6,17 +6,26 @@ class AccountPayment(models.Model):
     mpflujo = fields.Many2one('mp.flujo', string='Flujo')
     mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    def _create_payment_entry(self, amount):
-        # Llamada al super para generar el asiento contable
-        move = super(AccountPayment, self)._create_payment_entry(amount)
-        
-        # Asignar los valores de flujo y grupo de flujo al asiento contable
-        move.mp_flujo_id = self.mp_flujo_id
-        move.mp_grupo_flujo_id = self.mp_grupo_flujo_id
-        
-        # Asignar también a las líneas del asiento si es necesario
-        for line in move.line_ids:
-            line.mp_flujo_id = self.mp_flujo_id
-            line.mp_grupo_flujo_id = self.mp_grupo_flujo_id
+    def post(self):
+        # Llamar a la función original de validación
+        res = super(AccountPayment, self).post()
 
-        return move
+        for payment in self:
+            # Buscar el asiento contable generado por el pago
+            account_move = payment.move_id
+
+            if account_move:
+                # Asignar los valores de flujo y grupo de flujo al asiento contable
+                account_move.sudo().write({
+                    'mp_flujo_id': payment.mp_flujo_id.id,
+                    'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
+                })
+
+                # Asignar también a las líneas del asiento contable
+                for line in account_move.line_ids:
+                    line.sudo().write({
+                        'mp_flujo_id': payment.mp_flujo_id.id,
+                        'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
+                    })
+
+        return res
