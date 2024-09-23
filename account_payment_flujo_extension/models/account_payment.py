@@ -7,19 +7,19 @@ class AccountPayment(models.Model):
     mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
     def action_post(self):
-        # Llamamos a la función original para que continúe con el flujo de generación de asiento contable
+        # Llamamos a la función original para validar el pago
         res = super(AccountPayment, self).action_post()
 
-        # Iteramos sobre los pagos para heredar los valores de flujo y grupo de flujo a los asientos contables
+        # Recorremos los pagos y obtenemos los asientos generados
         for payment in self:
             if payment.move_id:
-                # Añadimos los valores del flujo y grupo de flujo al asiento contable generado
+                # Asignar los valores de Flujo y Grupo de Flujo al asiento contable
                 payment.move_id.mp_flujo_id = payment.mp_flujo_id
                 payment.move_id.mp_grupo_flujo_id = payment.mp_grupo_flujo_id
-                
-                # Ahora heredamos los valores de flujo y grupo de flujo también a las líneas del asiento
-                for move_line in payment.move_id.line_ids:
-                    move_line.mp_flujo_id = payment.mp_flujo_id
-                    move_line.mp_grupo_flujo_id = payment.mp_grupo_flujo_id
+
+                # Asignar los valores de Flujo y Grupo de Flujo a cada línea del asiento
+                for line in payment.move_id.line_ids:
+                    line.mp_flujo_id = payment.mp_flujo_id
+                    line.mp_grupo_flujo_id = payment.mp_grupo_flujo_id
 
         return res
