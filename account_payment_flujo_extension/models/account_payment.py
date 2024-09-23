@@ -11,14 +11,26 @@ class AccountPayment(models.Model):
     mpflujo = fields.Many2one('mp.flujo', string='Flujo')
     mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
+    @api.model
+    def create(self, vals):
+        # Validar que los valores de Flujo y Grupo de Flujo están presentes
+        if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
+            raise ValidationError("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar.")
+        return super(AccountPayment, self).create(vals)
+
+    def write(self, vals):
+        # Log para verificar la escritura de valores
+        _logger.info("Escribiendo valores de Flujo y Grupo de Flujo antes de validar")
+        return super(AccountPayment, self).write(vals)
+
     def action_post(self):
         """Overriding action_post to pass mp_flujo_id and mp_grupo_flujo_id to the account move"""
         _logger.info("Ejecutando action_post para el pago con ID: %s", self.id)
 
-        # Verificar si los valores de flujo y grupo de flujo están presentes
+        # Verificar que los campos están correctamente llenos antes de la validación
         if not self.mp_flujo_id or not self.mp_grupo_flujo_id:
             _logger.warning("Los valores de Flujo o Grupo de Flujo no están asignados en el pago con ID: %s", self.id)
-        
+
         # Log de los valores de flujo y grupo de flujo en el pago
         _logger.info("Valores antes de la validación: Flujo ID: %s, Grupo Flujo ID: %s", self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
 
