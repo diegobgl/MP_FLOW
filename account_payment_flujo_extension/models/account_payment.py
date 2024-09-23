@@ -14,6 +14,10 @@ class AccountPayment(models.Model):
     def action_post(self):
         """Overriding action_post to pass mp_flujo_id and mp_grupo_flujo_id to the account move"""
         _logger.info("Ejecutando action_post para el pago con ID: %s", self.id)
+
+        # Verificar si los valores de flujo y grupo de flujo están presentes
+        if not self.mp_flujo_id or not self.mp_grupo_flujo_id:
+            _logger.warning("Los valores de Flujo o Grupo de Flujo no están asignados en el pago con ID: %s", self.id)
         
         # Log de los valores de flujo y grupo de flujo en el pago
         _logger.info("Valores antes de la validación: Flujo ID: %s, Grupo Flujo ID: %s", self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
