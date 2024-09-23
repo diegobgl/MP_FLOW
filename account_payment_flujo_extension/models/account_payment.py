@@ -6,9 +6,9 @@ class AccountPayment(models.Model):
     mpflujo = fields.Many2one('mp.flujo', string='Flujo')
     mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    def post(self):
-        # Llamar a la función original de validación
-        res = super(AccountPayment, self).post()
+    def action_post(self):
+        # Llamar a la función original para validar el pago
+        res = super(AccountPayment, self).action_post()
 
         for payment in self:
             # Buscar el asiento contable generado por el pago
