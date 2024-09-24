@@ -7,14 +7,14 @@
         <field name="arch" type="xml">
             <xpath expr="//form/sheet/group" position="inside">
                 <group string="Flujo de Gestión">
-                    <field name="mp_flujo_id"/>
-                    <field name="mp_grupo_flujo_id"/>
+                    <field name="mp_flujo_id" options="{'no_create': True, 'no_open':True}"/>
+                    <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open':True}"/>
                 </group>
             </xpath>
         </field>
     </record>
 
-
+    <!-- Vista heredada para account.payment.register -->
     <record id="view_account_reg_payment_form_mp" model="ir.ui.view">
         <field name="name">account.payment.register.form.inherit.mp</field>
         <field name="model">account.payment.register</field>
