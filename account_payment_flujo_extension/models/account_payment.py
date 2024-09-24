@@ -1,15 +1,13 @@
 from odoo import models, fields
 import logging
 
-
 _logger = logging.getLogger(__name__)
-
 
 class AccountPayment(models.Model):
     _inherit = 'account.payment'
 
-    mpflujo = fields.Many2one('mp.flujo', string='Flujo')
-    mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
+    mp_flujo_id = fields.Many2one('mp.flujo', string='Flujo')
+    mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
     def create(self, vals):
         # Validar que los valores de Flujo y Grupo de Flujo están presentes
@@ -23,32 +21,32 @@ class AccountPayment(models.Model):
         return super(AccountPayment, self).write(vals)
 
     def action_post(self):
-        """Overriding action_post to pass mp_flujo_id and mp_grupo_flujo_id to the account move"""
         _logger.info("Ejecutando action_post para el pago con ID: %s", self.id)
 
-        # Verificar que los campos están correctamente llenos antes de la validación
+        # Validación de que los valores de flujo y grupo de flujo están presentes
         if not self.mp_flujo_id or not self.mp_grupo_flujo_id:
             _logger.warning("Los valores de Flujo o Grupo de Flujo no están asignados en el pago con ID: %s", self.id)
 
-        # Log de los valores de flujo y grupo de flujo en el pago
-        _logger.info("Valores antes de la validación: Flujo ID: %s, Grupo Flujo ID: %s", self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
+        # Lógica principal del asiento
+        res = super(AccountPayment, self).action_post()
 
-        # Ejecuta el superusuario para asegurar la correcta ejecución
-        self.sudo().move_id.write({
-            'mp_flujo_id': self.mp_flujo_id.id,
-            'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
-        })
-        
-        # Log después de la asignación
-        _logger.info("Valores escritos en el asiento contable (account.move): Flujo ID: %s, Grupo Flujo ID: %s", self.move_id.mp_flujo_id.id, self.move_id.mp_grupo_flujo_id.id)
-
-        # Verificar las líneas del asiento contable
-        for line in self.sudo().move_id.line_ids:
-            line.write({
+        if self.move_id:
+            # Asignación de los valores al asiento creado
+            account_move = self.move_id.sudo()
+            _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable: %s", account_move.id)
+            account_move.write({
                 'mp_flujo_id': self.mp_flujo_id.id,
                 'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
             })
-            # Log para cada línea
-            _logger.info("Valores escritos en la línea del asiento: Flujo ID: %s, Grupo Flujo ID: %s", line.mp_flujo_id.id, line.mp_grupo_flujo_id.id)
 
-        return super(AccountPayment, self).action_post()
+            # Asignación de los valores a las líneas del asiento
+            for line in account_move.line_ids:
+                _logger.info("Asignando Flujo y Grupo de Flujo a las líneas del asiento: %s", line.id)
+                line.sudo().write({
+                    'mp_flujo_id': self.mp_flujo_id.id,
+                    'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
+                })
+        else:
+            _logger.warning("No se encontró ningún asiento relacionado con el pago ID: %s", self.id)
+
+        return res
