@@ -9,11 +9,12 @@ class AccountPayment(models.Model):
     mp_flujo_id = fields.Many2one('mp.flujo', string='Flujo')
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    def create(self, vals):
-        # Validar que los valores de Flujo y Grupo de Flujo están presentes
-        if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
-            raise ValidationError("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar.")
-        return super(AccountPayment, self).create(vals)
+    def create(self, vals_list):
+        # Validar que los valores de Flujo y Grupo de Flujo están presentes para cada pago en la lista
+        for vals in vals_list:
+            if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
+                raise ValidationError("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar.")
+        return super(AccountPayment, self).create(vals_list)
 
     def write(self, vals):
         # Log para verificar la escritura de valores
@@ -26,27 +27,22 @@ class AccountPayment(models.Model):
         # Validación de que los valores de flujo y grupo de flujo están presentes
         if not self.mp_flujo_id or not self.mp_grupo_flujo_id:
             _logger.warning("Los valores de Flujo o Grupo de Flujo no están asignados en el pago con ID: %s", self.id)
-
+        
         # Lógica principal del asiento
         res = super(AccountPayment, self).action_post()
 
-        if self.move_id:
-            # Asignación de los valores al asiento creado
-            account_move = self.move_id.sudo()
-            _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable: %s", account_move.id)
-            account_move.write({
+        # Asignación de los valores al asiento creado
+        account_move = self.move_id.sudo()
+        account_move.write({
+            'mp_flujo_id': self.mp_flujo_id.id,
+            'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
+        })
+
+        # Asignación de los valores a las líneas del asiento
+        for line in account_move.line_ids:
+            line.sudo().write({
                 'mp_flujo_id': self.mp_flujo_id.id,
                 'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
             })
-
-            # Asignación de los valores a las líneas del asiento
-            for line in account_move.line_ids:
-                _logger.info("Asignando Flujo y Grupo de Flujo a las líneas del asiento: %s", line.id)
-                line.sudo().write({
-                    'mp_flujo_id': self.mp_flujo_id.id,
-                    'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
-                })
-        else:
-            _logger.warning("No se encontró ningún asiento relacionado con el pago ID: %s", self.id)
 
         return res
