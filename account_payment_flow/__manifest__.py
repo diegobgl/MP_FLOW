@@ -9,7 +9,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/account_payment_flow_view.xml',
-        'views/account_payment_regiter_views.xml',
+      #  'views/account_payment_regiter_views.xml',
     ],
     'license': 'AGPL-3',
 }

@@ -1,20 +1,21 @@
 from odoo import models, fields
 import logging
 
+
 _logger = logging.getLogger(__name__)
+
 
 class AccountPayment(models.Model):
     _inherit = 'account.payment'
 
-    mp_flujo_id = fields.Many2one('mp.flujo', string='Flujo')
-    mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
+    mpflujo = fields.Many2one('mp.flujo', string='Flujo')
+    mpgrupo_flujo = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    def create(self, vals_list):
-        # Validar que los valores de Flujo y Grupo de Flujo están presentes para cada pago en la lista
-        for vals in vals_list:
-            if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
-                raise ValidationError("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar.")
-        return super(AccountPayment, self).create(vals_list)
+    def create(self, vals):
+        # Validar que los valores de Flujo y Grupo de Flujo están presentes
+        if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
+            raise ValidationError("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar.")
+        return super(AccountPayment, self).create(vals)
 
     def write(self, vals):
         # Log para verificar la escritura de valores
@@ -46,3 +47,10 @@ class AccountPayment(models.Model):
             })
 
         return res
+
+
+class AccountPaymentRegister(models.TransientModel):
+    _inherit = 'account.payment.register'
+
+    mp_flujo_id = fields.Many2one(comodel_name="mp.flujo", string="Flujo", domain="[('id', 'in', mp_flujo_ids)]")
+    mp_flujo_ids = fields.One2many(related="mp_grupo_flujo_id.mp_flujo_ids", string="Flujos Relacionados")
