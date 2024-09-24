@@ -1,13 +1,14 @@
 <odoo>
+    <!-- Vista heredada para account.payment -->
     <record id="view_account_payment_form_inherit_flujo" model="ir.ui.view">
         <field name="name">account.payment.form.inherit.flujo</field>
         <field name="model">account.payment</field>
         <field name="inherit_id" ref="account.view_account_payment_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
-                <group>
-                    <field name="mpflujo"/>
-                    <field name="mpgrupo_flujo"/>
+            <xpath expr="//form/sheet/group" position="inside">
+                <group string="Flujo de Gestión">
+                    <field name="mp_flujo_id"/>
+                    <field name="mp_grupo_flujo_id"/>
                 </group>
             </xpath>
         </field>
