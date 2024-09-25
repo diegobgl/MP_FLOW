@@ -11,19 +11,36 @@ class AccountPayment(models.Model):
     mp_flujo_id = fields.Many2one('mp.flujo', string='Flujo')
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    def create(self, vals):
-        """Sobrescribe el método create para asegurarse que Flujo y Grupo de Flujo se asignen correctamente"""
-        if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
-            raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
-        return super(AccountPayment, self).create(vals)
+    def create(self, vals_list):
+        """
+        Sobrescribe el método create para asegurarse que Flujo y Grupo de Flujo se asignen correctamente.
+        Soporta tanto pagos individuales como múltiples.
+        """
+        # Si es una lista de valores, iteramos sobre cada pago individual
+        if isinstance(vals_list, list):
+            for vals in vals_list:
+                if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
+                    raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
+        else:
+            # Si es un diccionario de valores único (pago individual)
+            if not vals_list.get('mp_flujo_id') or not vals_list.get('mp_grupo_flujo_id'):
+                raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
+
+        return super(AccountPayment, self).create(vals_list)
 
     def write(self, vals):
-        """Sobrescribe el método write para asegurarse que Flujo y Grupo de Flujo se escriban correctamente"""
+        """
+        Sobrescribe el método write para asegurarse que Flujo y Grupo de Flujo se escriban correctamente
+        en los pagos existentes.
+        """
         _logger.info("Escribiendo valores de Flujo y Grupo de Flujo: %s", vals)
         return super(AccountPayment, self).write(vals)
 
     def action_post(self):
-        """Sobrescribe el método action_post para manejar pagos individuales y asegurar que los valores de Flujo y Grupo de Flujo se pasen correctamente"""
+        """
+        Sobrescribe el método action_post para manejar pagos individuales y asegurar que
+        los valores de Flujo y Grupo de Flujo se pasen correctamente al asiento contable creado.
+        """
         _logger.info("Ejecutando action_post para el pago con ID: %s", self.id)
 
         # Validación de que los valores de flujo y grupo de flujo están presentes
@@ -33,22 +50,22 @@ class AccountPayment(models.Model):
         # Lógica principal del asiento
         res = super(AccountPayment, self).action_post()
 
-        # Asignación de los valores al asiento creado
-        account_move = self.move_id.sudo()
-        account_move.write({
-            'mp_flujo_id': self.mp_flujo_id.id,
-            'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
-        })
-
-        # Asignación de los valores a las líneas del asiento
-        for line in account_move.line_ids:
-            line.sudo().write({
+        # Asignación de los valores al asiento contable creado
+        for move in self.move_ids:
+            move.sudo().write({
                 'mp_flujo_id': self.mp_flujo_id.id,
                 'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
             })
 
-        _logger.info("Valores escritos en el asiento contable (account.move): Flujo ID: %s, Grupo Flujo ID: %s",
-                     self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
+            # Asignación de los valores a las líneas del asiento
+            for line in move.line_ids:
+                line.sudo().write({
+                    'mp_flujo_id': self.mp_flujo_id.id,
+                    'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
+                })
+
+            _logger.info("Valores escritos en el asiento contable (account.move): Flujo ID: %s, Grupo Flujo ID: %s",
+                         self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
 
         return res
 
