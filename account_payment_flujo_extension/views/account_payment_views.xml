@@ -24,9 +24,7 @@
                 <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open':True}"/>
             </xpath>
             <xpath expr="//field[@name='communication']" position="after">
-                <field name="mp_flujo_ids" invisible="1"/>
-                <field name="mp_flujo_id" options="{'no_create': True, 'no_open':True}"
-                       domain="[('id', 'in', mp_flujo_ids)]"/>
+                <field name="mp_flujo_ids" invisible="0"/>
             </xpath>
         </field>
     </record>
