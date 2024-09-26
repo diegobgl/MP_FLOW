@@ -64,7 +64,7 @@ class AccountPayment(models.Model):
 class AccountPaymentRegister(models.TransientModel):
     _inherit = 'account.payment.register'
 
-    mp_flujo_id = fields.Many2one(comodel_name="mp.flujo", string="Flujo", domain="[('id', 'in', mp_flujo_ids)]")
+    mp_flujo_id = fields.Many2one(comodel_name="mp.flujo", string="Flujo")
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
 
     def _create_payments(self):
