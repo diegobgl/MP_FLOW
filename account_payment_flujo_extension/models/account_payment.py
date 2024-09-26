@@ -91,15 +91,21 @@ class AccountPaymentRegister(models.TransientModel):
 
     def _create_payments(self):
         """
-        Sobreescribe la función para crear pagos y asignar valores de Flujo y Grupo de Flujo
+        Sobreescribe la función para validar y crear pagos asignando los valores de Flujo y Grupo de Flujo
         """
+        # Validar si los valores de flujo y grupo de flujo están presentes
+        if not self.mp_flujo_id or not self.mp_grupo_flujo_id:
+            raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
+
         # Llamar al método original para crear los pagos
         payments = super(AccountPaymentRegister, self)._create_payments()
 
-        # Verificar si los valores fueron correctamente asignados
+        # Asignar los valores de Flujo y Grupo de Flujo a los pagos creados
         for payment in payments:
-            if not payment.mp_flujo_id or not payment.mp_grupo_flujo_id:
-                _logger.warning("No se asignaron los valores de Flujo o Grupo de Flujo para el pago %s", payment.id)
+            payment.sudo().write({
+                'mp_flujo_id': self.mp_flujo_id.id,
+                'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
+            })
 
         return payments
 
