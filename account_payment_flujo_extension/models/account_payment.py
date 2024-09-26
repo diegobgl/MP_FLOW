@@ -56,7 +56,7 @@ class AccountPayment(models.Model):
         return res
 
 
-
+_logger = logging.getLogger(__name__)
 
 class AccountPaymentRegister(models.TransientModel):
     _inherit = 'account.payment.register'
@@ -64,20 +64,41 @@ class AccountPaymentRegister(models.TransientModel):
     mp_flujo_id = fields.Many2one(comodel_name="mp.flujo", string="Flujo")
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
 
+    def _create_payment_vals_from_wizard(self, batch_result):
+        """
+        Hereda el método para incluir los campos de Flujo y Grupo de Flujo en los valores de creación del pago.
+        """
+        payment_vals = {
+            'date': self.payment_date,
+            'amount': self.amount,
+            'payment_type': self.payment_type,
+            'partner_type': self.partner_type,
+            'ref': self.communication,
+            'journal_id': self.journal_id.id,
+            'company_id': self.company_id.id,
+            'currency_id': self.currency_id.id,
+            'partner_id': self.partner_id.id,
+            'partner_bank_id': self.partner_bank_id.id,
+            'payment_method_line_id': self.payment_method_line_id.id,
+            'destination_account_id': self.line_ids[0].account_id.id,
+            'write_off_line_vals': [],
+            'mp_flujo_id': self.mp_flujo_id.id,  # Añadir Flujo
+            'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,  # Añadir Grupo de Flujo
+        }
+        
+        # Agregar más lógica relacionada si es necesario
+        return payment_vals
+
     def _create_payments(self):
         """
         Sobreescribe la función para crear pagos y asignar valores de Flujo y Grupo de Flujo
         """
+        # Llamar al método original para crear los pagos
         payments = super(AccountPaymentRegister, self)._create_payments()
 
-        # Asignar los valores de Flujo y Grupo de Flujo después de la creación de los pagos
+        # Verificar si los valores fueron correctamente asignados
         for payment in payments:
-            if self.mp_flujo_id and self.mp_grupo_flujo_id:
-                payment.sudo().write({
-                    'mp_flujo_id': self.mp_flujo_id.id,
-                    'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id
-                })
-            else:
+            if not payment.mp_flujo_id or not payment.mp_grupo_flujo_id:
                 _logger.warning("No se asignaron los valores de Flujo o Grupo de Flujo para el pago %s", payment.id)
 
         return payments
