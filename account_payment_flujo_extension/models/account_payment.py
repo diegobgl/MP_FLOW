@@ -66,22 +66,19 @@ class AccountPaymentRegister(models.TransientModel):
 
     def _create_payments(self):
         """
-        Hereda el método para crear pagos y asigna los valores de flujo y grupo de flujo.
+        Sobreescribe la función para crear pagos y asignar valores de Flujo y Grupo de Flujo
         """
-        # Llamada al método original de Odoo para crear los pagos
         payments = super(AccountPaymentRegister, self)._create_payments()
 
-        # Asignar los valores de Flujo y Grupo de Flujo después de que los pagos han sido creados
+        # Asignar los valores de Flujo y Grupo de Flujo después de la creación de los pagos
         for payment in payments:
             if self.mp_flujo_id and self.mp_grupo_flujo_id:
                 payment.sudo().write({
                     'mp_flujo_id': self.mp_flujo_id.id,
                     'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id
                 })
-                _logger.info("Asignados Flujo y Grupo de Flujo al pago %s", payment.id)
             else:
                 _logger.warning("No se asignaron los valores de Flujo o Grupo de Flujo para el pago %s", payment.id)
 
         return payments
-
 
