@@ -68,27 +68,16 @@ class AccountPaymentRegister(models.TransientModel):
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
 
     def _create_payments(self):
-        """ Extiende la lógica para pasar los valores de flujo y grupo de flujo a los pagos creados """
         payments = super(AccountPaymentRegister, self)._create_payments()
 
         for payment in payments:
-            _logger.info("Asignando Flujo y Grupo de Flujo a pago con ID: %s", payment.id)
-            payment.write({
-                'mp_flujo_id': self.mp_flujo_id.id,
-                'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
-            })
-
-            account_move = payment.move_id.sudo()
-            account_move.write({
-                'mp_flujo_id': self.mp_flujo_id.id,
-                'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
-            })
-
-            for line in account_move.line_ids:
-                line.sudo().write({
+            if self.mp_flujo_id and self.mp_grupo_flujo_id:
+                payment.sudo().write({
                     'mp_flujo_id': self.mp_flujo_id.id,
-                    'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
+                    'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id
                 })
-
-        _logger.info("Valores escritos en los pagos múltiples creados correctamente.")
+            else:
+                raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
         return payments
+
+
