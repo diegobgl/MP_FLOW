@@ -68,8 +68,10 @@ class AccountPaymentRegister(models.TransientModel):
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
 
     def _create_payments(self):
+        # Crear los pagos primero sin verificar los valores de flujo y grupo de flujo
         payments = super(AccountPaymentRegister, self)._create_payments()
 
+        # Ahora asignar los valores de Flujo y Grupo de Flujo después de que se han creado los pagos
         for payment in payments:
             if self.mp_flujo_id and self.mp_grupo_flujo_id:
                 payment.sudo().write({
@@ -77,7 +79,9 @@ class AccountPaymentRegister(models.TransientModel):
                     'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id
                 })
             else:
-                raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
+                # Si los valores de flujo no están presentes, podrías lanzar una advertencia en lugar de un error
+                _logger.warning("No se asignaron los valores de Flujo o Grupo de Flujo para el pago %s", payment.id)
+        
         return payments
 
 
