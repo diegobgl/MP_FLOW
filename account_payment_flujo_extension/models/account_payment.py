@@ -57,7 +57,7 @@ class AccountPayment(models.Model):
                          self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
 
         return res
-v2
+
 
 
 
