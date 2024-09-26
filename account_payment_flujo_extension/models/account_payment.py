@@ -1,9 +1,8 @@
-from odoo import models, fields
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError  # Importar ValidationError
 import logging
 
-
 _logger = logging.getLogger(__name__)
-
 
 class AccountPayment(models.Model):
     _inherit = 'account.payment'
@@ -11,7 +10,7 @@ class AccountPayment(models.Model):
     mp_flujo_id = fields.Many2one('mp.flujo', string='Flujo')
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
 
-    
+    @api.model
     def create(self, vals_list):
         """Sobrescribe el método create para asegurarse que Flujo y Grupo de Flujo se asignen correctamente.
         Soporta tanto pagos individuales como múltiples.
@@ -58,6 +57,7 @@ class AccountPayment(models.Model):
                          self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
 
         return res
+v2
 
 
 
