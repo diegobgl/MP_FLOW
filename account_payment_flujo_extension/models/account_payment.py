@@ -65,20 +65,23 @@ class AccountPaymentRegister(models.TransientModel):
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
 
     def _create_payments(self):
-        # Crear los pagos primero sin verificar los valores de flujo y grupo de flujo
+        """
+        Hereda el método para crear pagos y asigna los valores de flujo y grupo de flujo.
+        """
+        # Llamada al método original de Odoo para crear los pagos
         payments = super(AccountPaymentRegister, self)._create_payments()
 
-        # Ahora asignar los valores de Flujo y Grupo de Flujo después de que se han creado los pagos
+        # Asignar los valores de Flujo y Grupo de Flujo después de que los pagos han sido creados
         for payment in payments:
             if self.mp_flujo_id and self.mp_grupo_flujo_id:
                 payment.sudo().write({
                     'mp_flujo_id': self.mp_flujo_id.id,
                     'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id
                 })
+                _logger.info("Asignados Flujo y Grupo de Flujo al pago %s", payment.id)
             else:
-                # Si los valores de flujo no están presentes, podrías lanzar una advertencia en lugar de un error
                 _logger.warning("No se asignaron los valores de Flujo o Grupo de Flujo para el pago %s", payment.id)
-        
+
         return payments
 
 
