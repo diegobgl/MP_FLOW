@@ -58,12 +58,6 @@ class AccountPaymentRegister(models.TransientModel):
     mp_flujo_id = fields.Many2one(comodel_name="mp.flujo", string="Flujo")
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
 
-class AccountPaymentRegister(models.TransientModel):
-    _inherit = 'account.payment.register'
-
-    mp_flujo_id = fields.Many2one(comodel_name="mp.flujo", string="Flujo")
-    mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
-
     def _create_payment_vals_from_wizard(self, batch_result):
         """
         Hereda el método para incluir los campos de Flujo y Grupo de Flujo en los valores de creación del pago.
