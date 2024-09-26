@@ -85,17 +85,32 @@ class AccountPaymentRegister(models.TransientModel):
 
     def _create_payments(self):
         """
-        Sobreescribe la función para crear pagos y asignar valores de Flujo y Grupo de Flujo
+        Sobreescribe la función para crear pagos y asignar valores de Flujo y Grupo de Flujo.
+        También asigna estos valores a los asientos contables y sus líneas después de la creación de los pagos.
         """
         # Llamar al método original para crear los pagos
         payments = super(AccountPaymentRegister, self)._create_payments()
 
-        # Asignar los valores de Flujo y Grupo de Flujo a los pagos creados, sin validar si están presentes
+        # Después de la creación de los pagos, asignar los valores de Flujo y Grupo de Flujo a los asientos contables
         for payment in payments:
-            payment.sudo().write({
-                'mp_flujo_id': self.mp_flujo_id.id,
-                'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
-            })
+            if payment.move_id:  # Asegúrate de que el asiento contable (move_id) exista
+                _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) del pago: %s", payment.id)
+                
+                # Asignar Flujo y Grupo de Flujo al asiento contable
+                payment.move_id.sudo().write({
+                    'mp_flujo_id': payment.mp_flujo_id.id,
+                    'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
+                })
+                
+                # Asignar Flujo y Grupo de Flujo a las líneas del asiento contable (account.move.line)
+                for move_line in payment.move_id.line_ids:
+                    _logger.info("Asignando Flujo y Grupo de Flujo a las líneas del asiento contable (account.move.line): %s", move_line.id)
+                    move_line.sudo().write({
+                        'mp_flujo_id': payment.mp_flujo_id.id,
+                        'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
+                    })
+            else:
+                _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
 
         return payments
 
