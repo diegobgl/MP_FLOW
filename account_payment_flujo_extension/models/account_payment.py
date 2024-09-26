@@ -31,30 +31,27 @@ class AccountPayment(models.Model):
         return super(AccountPayment, self).write(vals)
 
     def action_post(self):
-        """Sobrescribe el método action_post para manejar pagos individuales y asegurar que
-        los valores de Flujo y Grupo de Flujo se pasen correctamente al asiento contable creado.
-        """
-        _logger.info("Ejecutando action_post para el pago con ID: %s", self.id)
-
-        if not self.mp_flujo_id or not self.mp_grupo_flujo_id:
-            _logger.warning("Los valores de Flujo o Grupo de Flujo no están asignados en el pago con ID: %s", self.id)
-
+        # Llamada al método original de Odoo para procesar el pago
         res = super(AccountPayment, self).action_post()
 
-        for move in self.move_ids:
-            move.sudo().write({
-                'mp_flujo_id': self.mp_flujo_id.id,
-                'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
-            })
-
-            for line in move.line_ids:
-                line.sudo().write({
-                    'mp_flujo_id': self.mp_flujo_id.id,
-                    'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
+        # Asegurarnos de que los asientos contables están creados antes de intentar acceder a ellos
+        for payment in self:
+            if payment.move_ids:
+                _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) del pago: %s", payment.id)
+                payment.move_ids.sudo().write({
+                    'mp_flujo_id': payment.mp_flujo_id.id,
+                    'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                 })
-
-            _logger.info("Valores escritos en el asiento contable (account.move): Flujo ID: %s, Grupo Flujo ID: %s",
-                         self.mp_flujo_id.id, self.mp_grupo_flujo_id.id)
+                
+                # Ahora también asignamos a las líneas del asiento contable (account.move.line)
+                for move_line in payment.move_ids.line_ids:
+                    _logger.info("Asignando Flujo y Grupo de Flujo a las líneas del asiento contable (account.move.line): %s", move_line.id)
+                    move_line.sudo().write({
+                        'mp_flujo_id': payment.mp_flujo_id.id,
+                        'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
+                    })
+            else:
+                _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
 
         return res
 
