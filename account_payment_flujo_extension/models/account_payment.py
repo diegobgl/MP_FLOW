@@ -15,14 +15,6 @@ class AccountPayment(models.Model):
         """Sobrescribe el método create para asegurarse que Flujo y Grupo de Flujo se asignen correctamente.
         Soporta tanto pagos individuales como múltiples.
         """
-        if isinstance(vals_list, list):
-            for vals in vals_list:
-                if not vals.get('mp_flujo_id') or not vals.get('mp_grupo_flujo_id'):
-                    raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
-        else:
-            if not vals_list.get('mp_flujo_id') or not vals_list.get('mp_grupo_flujo_id'):
-                raise ValidationError(_("Es necesario asignar el Flujo y Grupo de Flujo antes de continuar."))
-
         return super(AccountPayment, self).create(vals_list)
 
     def write(self, vals):
