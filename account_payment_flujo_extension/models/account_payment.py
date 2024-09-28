@@ -85,32 +85,39 @@ class AccountPaymentRegister(models.TransientModel):
     def _create_payments(self):
         """
         Sobreescribimos la función para asignar valores de Flujo y Grupo de Flujo a los asientos contables y sus líneas
-        ANTES de ejecutar action_post(), ya que los asientos deben estar en borrador para poder modificarlos.
+        Si el asiento está validado, volver a borrador, asignar valores y validar nuevamente.
         """
         # Llamar al método original para crear los pagos (esto también crea los asientos en borrador)
         payments = super(AccountPaymentRegister, self)._create_payments()
 
-        # Asignar los valores de Flujo y Grupo de Flujo a los asientos contables antes de publicarlos
+        # Asignar los valores de Flujo y Grupo de Flujo a los asientos contables
         for payment in payments:
             if payment.move_id:  # Verifica si el asiento contable (move_id) existe
-                _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) en borrador del pago: %s", payment.id)
+                move = payment.move_id
                 
-                # Asignar Flujo y Grupo de Flujo al asiento contable (account.move) en borrador
-                payment.move_id.sudo().write({
+                # Si el asiento está validado, ponerlo en borrador primero
+                if move.state == 'posted':
+                    _logger.info("El asiento %s está validado. Se establecerá en borrador antes de asignar los valores.", move.name)
+                    move.button_draft()  # Cambia el estado del asiento a borrador
+                
+                # Asignar Flujo y Grupo de Flujo al asiento contable (account.move)
+                _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) en borrador del pago: %s", payment.id)
+                move.sudo().write({
                     'mp_flujo_id': payment.mp_flujo_id.id,
                     'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                 })
                 
                 # Asignar Flujo y Grupo de Flujo a las líneas del asiento contable (account.move.line)
-                for move_line in payment.move_id.line_ids:
+                for move_line in move.line_ids:
                     move_line.sudo().write({
                         'mp_flujo_id': payment.mp_flujo_id.id,
                         'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                     })
+                
+                # Validar nuevamente el asiento
+                _logger.info("Validando nuevamente el asiento contable (account.move): %s", move.name)
+                move.action_post()
             else:
                 _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
-
-        # Ahora, después de asignar los valores a los asientos, ejecutamos action_post para publicarlos
-        payments.action_post()
 
         return payments
