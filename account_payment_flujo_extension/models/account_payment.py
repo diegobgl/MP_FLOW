@@ -84,24 +84,25 @@ class AccountPaymentRegister(models.TransientModel):
 
     def _create_payments(self):
         """
-        Sobreescribimos la función para asignar valores de Flujo y Grupo de Flujo a los asientos contables y sus líneas
-        Si el asiento está validado, volver a borrador, asignar valores y validar nuevamente.
+        Sobreescribimos la función para crear pagos y asignar valores de Flujo y Grupo de Flujo al pago,
+        y al asiento contable. Si el asiento está validado, lo devolvemos a borrador, asignamos los valores,
+        y luego volvemos a validar el asiento.
         """
-        # Llamar al método original para crear los pagos (esto también crea los asientos en borrador)
+        # Llamar al método original para crear los pagos
         payments = super(AccountPaymentRegister, self)._create_payments()
 
-        # Asignar los valores de Flujo y Grupo de Flujo a los asientos contables
         for payment in payments:
             if payment.move_id:  # Verifica si el asiento contable (move_id) existe
+                _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) del pago: %s", payment.id)
+                
                 move = payment.move_id
-                
-                # Si el asiento está validado, ponerlo en borrador primero
+
+                # Si el asiento ya está validado (publicado), lo volvemos a poner en borrador
                 if move.state == 'posted':
-                    _logger.info("El asiento %s está validado. Se establecerá en borrador antes de asignar los valores.", move.name)
-                    move.button_draft()  # Cambia el estado del asiento a borrador
-                
+                    move.button_draft()
+                    _logger.info("El asiento %s se ha cambiado a estado borrador.", move.name)
+
                 # Asignar Flujo y Grupo de Flujo al asiento contable (account.move)
-                _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) en borrador del pago: %s", payment.id)
                 move.sudo().write({
                     'mp_flujo_id': payment.mp_flujo_id.id,
                     'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
@@ -114,9 +115,9 @@ class AccountPaymentRegister(models.TransientModel):
                         'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                     })
                 
-                # Validar nuevamente el asiento
-                _logger.info("Validando nuevamente el asiento contable (account.move): %s", move.name)
+                # Volver a validar el asiento después de asignar los valores
                 move.action_post()
+                _logger.info("El asiento %s se ha vuelto a validar.", move.name)
             else:
                 _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
 
