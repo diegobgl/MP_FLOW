@@ -88,10 +88,15 @@ class AccountPaymentRegister(models.TransientModel):
         se asignen correctamente tanto al pago como al asiento contable.
         """
         # Llamamos al método original para crear los pagos
-        payments = super(AccountPaymentRegister, self).action_create_payments()
+        payments_action = super(AccountPaymentRegister, self).action_create_payments()
 
-        # Ahora asignamos los valores de Flujo y Grupo de Flujo a los pagos y a los asientos contables
-        for payment in payments:
+        # Comprobamos si el resultado es una acción o un conjunto de registros
+        if isinstance(payments_action, dict):
+            # El resultado es una acción, por lo que no podemos iterar sobre registros directamente
+            return payments_action
+
+        # Si es un registro de pagos, procedemos a asignar los valores de Flujo y Grupo de Flujo
+        for payment in payments_action:
             if payment.move_id:  # Verificamos si el asiento contable (move_id) existe
                 move = payment.move_id
 
@@ -115,4 +120,4 @@ class AccountPaymentRegister(models.TransientModel):
             else:
                 _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
 
-        return payments
+        return payments_action
