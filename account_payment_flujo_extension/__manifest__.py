@@ -1,7 +1,7 @@
 {
     'name': 'Account Payment Flujo Extension',
     'version': '17.0',
-    'summary': 'Extension to add mpflujo and mpgrupo_flujo fields to payments',
+    'summary': 'Extension to add mpflujo and mpgrupo_flujo fields to payments.',
     'author': 'Your Name',
     'category': 'Accounting',
     'depends': ['account'],
