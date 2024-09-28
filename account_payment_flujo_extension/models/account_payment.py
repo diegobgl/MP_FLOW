@@ -58,6 +58,20 @@ class AccountPaymentRegister(models.TransientModel):
     mp_flujo_id = fields.Many2one(comodel_name="mp.flujo", string="Flujo")
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
 
+    @api.model
+    def default_get(self, fields_list):
+        """
+        Asegurarse de que los campos de Flujo y Grupo de Flujo se incluyan en los valores predeterminados cuando se
+        crea el registro del wizard.
+        """
+        res = super(AccountPaymentRegister, self).default_get(fields_list)
+        # Si los campos están disponibles en el contexto, incluirlos en el wizard
+        if 'mp_flujo_id' in self._context:
+            res['mp_flujo_id'] = self._context.get('mp_flujo_id')
+        if 'mp_grupo_flujo_id' in self._context:
+            res['mp_grupo_flujo_id'] = self._context.get('mp_grupo_flujo_id')
+        return res
+
     def _create_payment_vals_from_wizard(self, batch_result):
         """
         Asignar los campos de Flujo y Grupo de Flujo a los valores de creación del pago.
@@ -76,10 +90,9 @@ class AccountPaymentRegister(models.TransientModel):
             'payment_method_line_id': self.payment_method_line_id.id,
             'destination_account_id': self.line_ids[0].account_id.id,
             'write_off_line_vals': [],
-            'mp_flujo_id': self.mp_flujo_id.id,  # Añadir Flujo
-            'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,  # Añadir Grupo de Flujo
+            'mp_flujo_id': self.mp_flujo_id.id,  # Flujo
+            'mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,  # Grupo de Flujo
         }
-
         return payment_vals
 
     def action_create_payments(self):
@@ -88,15 +101,10 @@ class AccountPaymentRegister(models.TransientModel):
         se asignen correctamente tanto al pago como al asiento contable.
         """
         # Llamamos al método original para crear los pagos
-        payments_action = super(AccountPaymentRegister, self).action_create_payments()
+        payments = super(AccountPaymentRegister, self).action_create_payments()
 
-        # Comprobamos si el resultado es una acción o un conjunto de registros
-        if isinstance(payments_action, dict):
-            # El resultado es una acción, por lo que no podemos iterar sobre registros directamente
-            return payments_action
-
-        # Si es un registro de pagos, procedemos a asignar los valores de Flujo y Grupo de Flujo
-        for payment in payments_action:
+        # Ahora asignamos los valores de Flujo y Grupo de Flujo a los pagos y a los asientos contables
+        for payment in payments:
             if payment.move_id:  # Verificamos si el asiento contable (move_id) existe
                 move = payment.move_id
 
@@ -120,4 +128,4 @@ class AccountPaymentRegister(models.TransientModel):
             else:
                 _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
 
-        return payments_action
+        return payments
