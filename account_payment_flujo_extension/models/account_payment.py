@@ -82,29 +82,29 @@ class AccountPaymentRegister(models.TransientModel):
 
         return payment_vals
 
-    def _create_payments(self):
+    def action_create_payments(self):
         """
-        Primero asignamos los valores al pago creado.
-        Luego intentamos asignar los valores al asiento contable solo si está en borrador.
+        Heredamos la función action_create_payments para asegurarnos de que los valores de Flujo y Grupo de Flujo
+        se asignen correctamente tanto al pago como al asiento contable.
         """
-        # Llamar al método original para crear los pagos
-        payments = super(AccountPaymentRegister, self)._create_payments()
+        # Llamamos al método original para crear los pagos
+        payments = super(AccountPaymentRegister, self).action_create_payments()
 
-        # Asignar los valores al asiento contable si está en borrador
+        # Ahora asignamos los valores de Flujo y Grupo de Flujo a los pagos y a los asientos contables
         for payment in payments:
-            if payment.move_id:  # Verifica si el asiento contable (move_id) existe
+            if payment.move_id:  # Verificamos si el asiento contable (move_id) existe
                 move = payment.move_id
 
-                # Asignar Flujo y Grupo de Flujo solo si el asiento está en borrador
+                # Asignamos los valores al asiento en borrador
                 if move.state == 'draft':  # Solo modificar si está en borrador
                     _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) en borrador del pago: %s", payment.id)
-                    
+
                     move.sudo().write({
                         'mp_flujo_id': payment.mp_flujo_id.id,
                         'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                     })
-                    
-                    # Asignar Flujo y Grupo de Flujo a las líneas del asiento contable (account.move.line)
+
+                    # Asignamos los valores a las líneas del asiento contable (account.move.line)
                     for move_line in move.line_ids:
                         move_line.sudo().write({
                             'mp_flujo_id': payment.mp_flujo_id.id,
@@ -112,6 +112,7 @@ class AccountPaymentRegister(models.TransientModel):
                         })
                 else:
                     _logger.info("El asiento %s ya está validado, no se puede modificar.", move.name)
+            else:
+                _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
 
         return payments
-
