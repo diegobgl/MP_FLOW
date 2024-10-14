@@ -71,13 +71,13 @@
 
 
     <!-- Menú Principal Reportes Control de Gestión -->
-    <menuitem id="menu_reportes_control_gestion_root"
+    <!--menuitem id="menu_reportes_control_gestion_root"
               name=" Control Flujos de pago"
               sequence="10"
-              web_icon="fa-bar-chart"/>
+              web_icon="fa-bar-chart"/-->
 
 
-    <menuitem id="account_mp_flujo_menu" parent="menu_reportes_control_gestion_root"
+    <menuitem id="account_mp_flujo_menu" parent="menu_finance_configuration"
               name="Flujos de pago" sequence="2"/>
 
     <menuitem id="menu_action_account_mp_grupo_flujo"
