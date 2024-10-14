@@ -57,12 +57,14 @@
         </field>
     </record>
 
+    <!-- Definir la acción para abrir las vistas de MP Flujo -->
     <record model="ir.actions.act_window" id="ir_account_mp_flujo">
         <field name="name">MP Flujo</field>
         <field name="res_model">mp.flujo</field>
         <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- Definir la acción para abrir las vistas de MP Grupo Flujo -->
     <record model="ir.actions.act_window" id="ir_account_mp_grupo_flujo">
         <field name="name">MP Grupo Flujo</field>
         <field name="res_model">mp.grupo.flujo</field>
@@ -70,22 +72,20 @@
     </record>
 
 
-    <!-- Menú Principal Reportes Control de Gestión -->
-    <!--menuitem id="menu_reportes_control_gestion_root"
-              name=" Control Flujos de pago"
-              sequence="10"
-              web_icon="fa-bar-chart"/-->
-
-
+    <!-- Añadir el menú principal "Flujos de pago" bajo el menú de configuración de Finanzas -->
     <menuitem id="account_mp_flujo_menu" parent="menu_finance_configuration"
-              name="Flujos de pago" sequence="2"/>
+                name="Flujos de pago" sequence="2"/>
 
+    <!-- Añadir el submenú para Grupo Flujo -->
     <menuitem id="menu_action_account_mp_grupo_flujo"
-              name="Grupo Flujo"
-              action="ir_account_mp_grupo_flujo" parent="account_mp_flujo_menu"/>
+                name="Grupo Flujo"
+                action="ir_account_mp_grupo_flujo"
+                parent="account_mp_flujo_menu" sequence="1"/>
 
+    <!-- Añadir el submenú para Flujo -->
     <menuitem id="menu_action_account_mp_flujo"
-              name="Flujo"
-              action="ir_account_mp_flujo" parent="account_mp_flujo_menu"/>
+                name="Flujo"
+                action="ir_account_mp_flujo"
+                parent="account_mp_flujo_menu" sequence="2"/>
 
 </odoo>
