@@ -40,6 +40,31 @@
         </field>
     </record>
 
+        <!-- Herencia para la vista de pagos en modo tree: account.view_account_supplier_payment_tree -->
+    <record id="view_account_payment_tree_inherit_flujo" model="ir.ui.view">
+        <field name="name">account.payment.tree.inherit.flujo</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/> <!-- Vista correcta para pagos -->
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="mp_flujo_id"/>
+                <field name="mp_grupo_flujo_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_in_invoice_bill_tree_inherit_flujo" model="ir.ui.view">
+        <field name="name">account.invoice.tree.inherit.flujo</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="mp_flujo_id"/>
+                <field name="mp_grupo_flujo_id"/>
+            </xpath>
+        </field>
+    </record>
+
 
 
 
