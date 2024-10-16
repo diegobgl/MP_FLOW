@@ -52,7 +52,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="nombre"/>
-                <field name="flujo_id" invisible="1"/>
+                <field name="flujo_ids" invisible="1"/>
             </tree>
         </field>
     </record>
