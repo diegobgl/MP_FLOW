@@ -98,8 +98,6 @@ class AccountPayment(models.Model):
                 }
             }
 
-
-
 # Wizard account.payment.register
 class AccountPaymentRegister(models.TransientModel):
     _inherit = 'account.payment.register'
