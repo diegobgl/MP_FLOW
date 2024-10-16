@@ -9,6 +9,13 @@ class AccountMove(models.Model):
 
     mp_flujo_id = fields.Many2one('mp.flujo', string="Flujo")
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo")
+    partner_vat = fields.Char(
+        string='VAT',
+        related='partner_id.vat',
+        readonly=True,
+        store=True  # Almacenar para que sea más eficiente en vistas tree
+    )
+
 
     def action_post(self):
         # Llamada al método original

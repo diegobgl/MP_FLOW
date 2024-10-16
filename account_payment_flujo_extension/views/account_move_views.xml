@@ -9,6 +9,7 @@
                 <group>
                     <field name="mp_flujo_id"/>
                     <field name="mp_grupo_flujo_id"/>
+                    <field name="partner_vat" string="VAT"/>
                 </group>
             </xpath>
         </field>

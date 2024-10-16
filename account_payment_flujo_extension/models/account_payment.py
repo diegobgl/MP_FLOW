@@ -9,6 +9,13 @@ class AccountPayment(models.Model):
 
     mp_flujo_id = fields.Many2one('mp.flujo', string='Flujo')
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string='Grupo de Flujo')
+    partner_vat = fields.Char(
+        string='VAT',
+        related='partner_id.vat',
+        readonly=True,
+        store=True  
+    )
+
 
     @api.model
     def create(self, vals):
