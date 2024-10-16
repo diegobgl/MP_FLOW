@@ -77,6 +77,25 @@ class AccountPayment(models.Model):
 
         return res
 
+        @api.onchange('mp_grupo_flujo_id')
+    def _onchange_mp_grupo_flujo_id(self):
+        if self.mp_grupo_flujo_id:
+            # Filtra los flujos que están relacionados con el grupo seleccionado
+            return {
+                'domain': {
+                    'mp_flujo_id': [
+                        ('grupo_flujo_ids', 'in', self.mp_grupo_flujo_id.id)
+                    ]
+                }
+            }
+        else:
+            # Si no hay grupo seleccionado, no aplicar filtro
+            return {
+                'domain': {
+                    'mp_flujo_id': []
+                }
+            }
+
 
 # Wizard account.payment.register
 class AccountPaymentRegister(models.TransientModel):
