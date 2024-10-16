@@ -5,7 +5,7 @@ class MpFlujo(models.Model):
     _rec_name = "display_name"
 
     codigo = fields.Char(string="Código")
-    descripcion = fields.Text(string="Descripción")
+    descripcion = fields.Text(string="Descripción")  
     # Define la relación Many2many simplificada
     grupo_flujo_ids = fields.Many2many(
         comodel_name="mp.grupo.flujo",
