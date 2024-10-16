@@ -10,7 +10,9 @@
             </xpath>
             <xpath expr="//field[@name='communication']" position="after">
                 <field name="mp_flujo_ids" invisible="1"/>
-                <field name="mp_flujo_id" options="{'no_create': True, 'no_open':True}"/>
+                <field name="mp_flujo_id" 
+                           options="{'no_create': True, 'no_open':True}"
+                           domain="[('grupo_flujo_ids', 'in', mp_grupo_flujo_id)]"/>
             </xpath>
         </field>
     </record>
