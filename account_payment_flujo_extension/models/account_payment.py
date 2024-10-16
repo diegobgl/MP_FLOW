@@ -77,7 +77,7 @@ class AccountPayment(models.Model):
 
         return res
 
-        @api.onchange('mp_grupo_flujo_id')
+    @api.onchange('mp_grupo_flujo_id')
     def _onchange_mp_grupo_flujo_id(self):
         if self.mp_grupo_flujo_id:
             # Filtra los flujos que están relacionados con el grupo seleccionado
