@@ -8,7 +8,9 @@
             <xpath expr="//form/sheet/group" position="inside">
                 <group string="Flujo de Gestión">
                     <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open':True}"/>
-                    <field name="mp_flujo_id"  options="{'no_create': True, 'no_open':True}" domain="[('grupo_flujo_id', '=', mp_grupo_flujo_id)]"/>                
+                    <field name="mp_flujo_id" 
+                           options="{'no_create': True, 'no_open':True}"
+                           domain="[('grupo_flujo_ids', 'in', mp_grupo_flujo_id)]"/>
                 </group>
             </xpath>
         </field>
