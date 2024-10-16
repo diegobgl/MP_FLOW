@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="codigo"/>
+                <field name="decripcion"/>
                 <field name="grupo_flujo_ids" widget="many2many_tags"/>
             </tree>
         </field>
@@ -35,6 +36,7 @@
                         <field name="codigo"/>
                     </group>
                     <group>
+                        <field name="decripcion"/>
                     </group>
                     <group>
                         <field name="grupo_flujo_ids" widget="many2many_tags"/>
@@ -50,6 +52,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="nombre"/>
+                <field name="flujo_id" invisible="1"/>
             </tree>
         </field>
     </record>
