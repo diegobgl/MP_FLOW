@@ -8,7 +8,7 @@
             <xpath expr="//form/sheet/group" position="inside">
                 <group string="Flujo de Gestión">
                     <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open':True}"/>
-                    <field name="mp_flujo_id" 
+                    <field name="mp_flujo_ids" widget="many2many_tags" 
                            options="{'no_create': True, 'no_open':True}"
                            domain="[('grupo_flujo_ids', 'in', mp_grupo_flujo_id)]"/>
                 </group>
@@ -16,6 +16,7 @@
         </field>
     </record>
 
+    <!-- Vista heredada para el wizard account.payment.register -->
     <record id="view_account_reg_payment_form_mp" model="ir.ui.view">
         <field name="name">account.payment.register.form.inherit.mp</field>
         <field name="model">account.payment.register</field>
@@ -25,38 +26,38 @@
                 <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open':True}" required="1"/>
             </xpath>
             <xpath expr="//field[@name='communication']" position="after">
-                    <field name="mp_flujo_id"  options="{'no_create': True, 'no_open':True}"/>                
+                <field name="mp_flujo_ids" widget="many2many_tags" 
+                       options="{'no_create': True, 'no_open':True}"
+                       domain="[('grupo_flujo_ids', 'in', mp_grupo_flujo_id)]"/>                
             </xpath>
         </field>
     </record>
 
-
-        <!-- Herencia para la vista de pagos en modo tree: account.view_account_supplier_payment_tree -->
+    <!-- Herencia para la vista de pagos en modo tree: account.view_account_supplier_payment_tree -->
     <record id="view_account_payment_tree_inherit_flujo" model="ir.ui.view">
         <field name="name">account.payment.tree.inherit.flujo</field>
         <field name="model">account.payment</field>
-        <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/> <!-- Vista correcta para pagos -->
+        <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="inside">
-                <field name="mp_flujo_id"/>
+                <field name="mp_flujo_ids" widget="many2many_tags"/>
                 <field name="mp_grupo_flujo_id"/>
                 <field name="partner_vat" string="VAT"/>
             </xpath>
         </field>
     </record>
 
+    <!-- Vista heredada para account.move en modo tree (facturas de proveedor) -->
     <record id="view_in_invoice_bill_tree_inherit_flujo" model="ir.ui.view">
         <field name="name">account.invoice.tree.inherit.flujo</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
         <field name="arch" type="xml">
-            <!-- Asegúrate de que el xpath apunte correctamente al nodo tree -->
             <xpath expr="//tree" position="inside">
-                <field name="mp_flujo_id"/>
+                <field name="mp_flujo_ids" widget="many2many_tags"/>
                 <field name="mp_grupo_flujo_id"/>
                 <field name="partner_vat" string="RUT"/>
             </xpath>
         </field>
     </record>
-
 </odoo>

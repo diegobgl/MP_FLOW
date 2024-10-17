@@ -7,13 +7,11 @@ class MpFlujo(models.Model):
     codigo = fields.Char(string="Código")
     descripcion = fields.Text(string="Descripción")  
     # Define la relación Many2many simplificada
-    grupo_flujo_ids = fields.Many2many(
+    grupo_flujo_id = fields.Many2one(
         comodel_name="mp.grupo.flujo",
-        relation="mp_flujo_grupo_rel",  # Nombre de relación único
-        column1="flujo_id",
-        column2="grupo_flujo_id",
-        string="Grupos de Flujo"
+        string="Grupo de Flujo"
     )
+    
     display_name = fields.Char(
         compute="_compute_display_name", 
         string="Nombre de Visualización", 

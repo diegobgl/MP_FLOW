@@ -5,11 +5,12 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
+            <!-- Insertar los campos justo después del primer grupo en el formulario -->
             <xpath expr="//sheet/group" position="inside">
-                <group>
-                    <field name="mp_flujo_id"/>
-                    <field name="mp_grupo_flujo_id"/>
-                    <field name="partner_vat" string="VAT"/>
+                <group string="Flujo de Gestión">
+                    <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open':True}"/>
+                    <field name="mp_flujo_id" options="{'no_create': True, 'no_open':True}"/>
+                    <field name="partner_vat" string="VAT" readonly="1"/>
                 </group>
             </xpath>
         </field>
