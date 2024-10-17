@@ -19,7 +19,6 @@
         </field>
     </record>
 
-
     <!-- Vista heredada para el wizard account.payment.register -->
     <record id="view_account_reg_payment_form_mp" model="ir.ui.view">
         <field name="name">account.payment.register.form.inherit.mp</field>
