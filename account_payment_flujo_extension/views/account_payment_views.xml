@@ -12,14 +12,13 @@
             
             <!-- Añadir el campo mp_flujo_ids después del campo communication -->
             <xpath expr="//field[@name='communication']" position="after">
-                    <field name="mp_flujo_ids" widget="many2many_tags" 
-                        options="{'no_create': True, 'no_open':True}"
-                        domain="[('mp_grupo_flujo_id', '=', mp_grupo_flujo_id)]"/> 
+                <!-- Corregir el dominio con el campo correcto -->
+                <field name="mp_flujo_ids" widget="many2many_tags" 
+                    options="{'no_create': True, 'no_open':True}"
+                    domain="[('grupo_flujo_ids', 'in', mp_grupo_flujo_id)]"/> 
             </xpath>
         </field>
     </record>
-
-
 
     <!-- Herencia para la vista de pagos en modo tree: account.view_account_supplier_payment_tree -->
     <record id="view_account_payment_tree_inherit_flujo" model="ir.ui.view">
@@ -42,7 +41,8 @@
         <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="inside">
-                <field name="mp_flujo_id" widget="many2many_tags"/>
+                <!-- Usar el campo correcto para flujos en facturas -->
+                <field name="mp_flujo_ids" widget="many2many_tags"/>
                 <field name="mp_grupo_flujo_id"/>
                 <field name="partner_vat" string="RUT"/>
             </xpath>
