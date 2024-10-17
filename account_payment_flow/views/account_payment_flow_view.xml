@@ -39,7 +39,7 @@
                         <field name="descripcion"/>
                     </group>
                     <group>
-                        <field name="grupo_flujo_ids" widget="many2many_tags"/>
+                        <field name="grupo_flujo_id" widget="many2many_tags"/>
                     </group>
                 </sheet>
             </form>
