@@ -42,7 +42,7 @@
         <field name="arch" type="xml">
             <xpath expr="//tree" position="inside">
                 <!-- Usar el campo correcto para flujos en facturas -->
-                <field name="mp_flujo_ids" widget="many2many_tags"/>
+                <field name="mp_flujo_id" widget="many2many_tags"/>
                 <field name="mp_grupo_flujo_id"/>
                 <field name="partner_vat" string="RUT"/>
             </xpath>
