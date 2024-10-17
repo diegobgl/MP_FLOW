@@ -78,14 +78,14 @@ class AccountPayment(models.Model):
     @api.onchange('mp_grupo_flujo_id')
     def _onchange_mp_grupo_flujo_id(self):
         if self.mp_grupo_flujo_id:
-            # Buscar todos los flujos que están relacionados con el grupo seleccionado
+            # Buscar los flujos que están relacionados con el grupo seleccionado usando el campo correcto
             flujos = self.env['mp.flujo'].search([
-                ('grupo_flujo_ids', 'in', self.mp_grupo_flujo_id.id)
+                ('mp_grupo_flujo_id', '=', self.mp_grupo_flujo_id.id)  # Usar el campo correcto aquí
             ])
             # Aplicar el dominio para mostrar solo estos flujos
             return {
                 'domain': {
-                    'mp_flujo_ids': [('id', 'in', flujos.ids)]
+                    'mp_flujo_ids': [('id', 'in', flujos.ids)]  # Usar el campo correcto para el dominio
                 }
             }
         else:
