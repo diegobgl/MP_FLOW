@@ -74,7 +74,7 @@
 
     <!-- Añadir el menú principal "Flujos de pago" bajo el menú de configuración de Finanzas -->
     <menuitem id="account_mp_flujo_menu" parent="account.menu_finance_payables"
-                name="Flujos de pago" sequence="5"/>
+                name="Flujos de pago" sequence="10"/>
 
     <!-- Añadir el submenú para Grupo Flujo -->
     <menuitem id="menu_action_account_mp_grupo_flujo"
