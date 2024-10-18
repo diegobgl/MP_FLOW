@@ -13,7 +13,9 @@
             <!-- Añadir el campo mp_flujo_ids después del campo communication -->
             <xpath expr="//field[@name='communication']" position="after">
                 <!-- Corregir el dominio para Many2one -->
-                <field name="mp_flujo_ids" options="{'no_create': True, 'no_open':True}"/> 
+                <field name="mp_flujo_ids" options="{'no_create': True, 'no_open':True}"
+                     domain="[('grupo_flujo_id', '=', mp_grupo_flujo_id)]"
+                /> 
             </xpath>
         </field>
     </record>
