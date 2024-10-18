@@ -11,6 +11,8 @@
                     <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open': True}"/>
                     <field name="mp_flujo_id" 
                            options="{'no_create': True, 'no_open': True}" 
+                           domain="[('grupo_flujo_id', '=', mp_grupo_flujo_id)]" 
+                           widget="selection"
                            /> <!-- Asegurando que el flujo corresponde al grupo seleccionado -->
                 </group>
             </xpath>
