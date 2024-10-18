@@ -49,6 +49,7 @@ class AccountPayment(models.Model):
 
         return payment
 
+
     def action_post(self):
         """
         Sobreescribe el método action_post para asignar los valores de Flujo y Grupo de Flujo a los asientos contables.
@@ -57,24 +58,23 @@ class AccountPayment(models.Model):
 
         for payment in self:
             if payment.move_id:  # Asegúrate de que el asiento contable (move_id) existe
-                _logger.info("Asignando Flujos y Grupo de Flujo al asiento contable (account.move) del pago: %s", payment.id)
+                _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) del pago: %s", payment.id)
                 payment.move_id.sudo().write({
-                    'mp_flujo_ids': [(6, 0, payment.mp_flujo_ids.ids)],
+                    'mp_flujo_id': payment.mp_flujo_id.id,
                     'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                 })
 
                 # Asignar también a las líneas del asiento contable
                 for move_line in payment.move_id.line_ids:
-                    _logger.info("Asignando Flujos y Grupo de Flujo a las líneas del asiento contable (account.move.line): %s", move_line.id)
+                    _logger.info("Asignando Flujo y Grupo de Flujo a las líneas del asiento contable (account.move.line): %s", move_line.id)
                     move_line.sudo().write({
-                        'mp_flujo_ids': [(6, 0, payment.mp_flujo_ids.ids)],
+                        'mp_flujo_id': payment.mp_flujo_id.id,
                         'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                     })
             else:
                 _logger.warning("No se encontraron asientos contables asociados al pago %s", payment.id)
 
         return res
-
 
 
 # Wizard account.payment.register
