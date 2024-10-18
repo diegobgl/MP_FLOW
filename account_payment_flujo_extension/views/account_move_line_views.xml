@@ -11,7 +11,7 @@
                     <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open': True}"/>
                     <field name="mp_flujo_id" 
                            options="{'no_create': True, 'no_open': True}" 
-                           domain="[('mp_flujo_ids', 'in', mp_grupo_flujo_id)]"/> <!-- Asegurando que el flujo corresponde al grupo seleccionado -->
+                           "/> <!-- Asegurando que el flujo corresponde al grupo seleccionado -->
                 </group>
             </xpath>
         </field>
