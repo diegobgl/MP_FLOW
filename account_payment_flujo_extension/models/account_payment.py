@@ -75,26 +75,7 @@ class AccountPayment(models.Model):
 
         return res
 
-    @api.onchange('mp_grupo_flujo_id')
-    def _onchange_mp_grupo_flujo_id(self):
-        if self.mp_grupo_flujo_id:
-            # Buscar los flujos que están relacionados con el grupo seleccionado
-            flujos = self.env['mp.flujo'].search([
-                ('mp_grupo_flujo_id', '=', self.mp_grupo_flujo_id.id)  # Usar el campo correcto
-            ])
-            # Aplicar el dominio para mostrar solo estos flujos
-            return {
-                'domain': {
-                    'mp_flujo_ids': [('id', 'in', flujos.ids)]  # Usar el campo Many2many correcto
-                }
-            }
-        else:
-            # Si no hay grupo seleccionado, no aplicar ningún filtro
-            return {
-                'domain': {
-                    'mp_flujo_ids': []
-                }
-            }
+
 
 # Wizard account.payment.register
 class AccountPaymentRegister(models.TransientModel):
