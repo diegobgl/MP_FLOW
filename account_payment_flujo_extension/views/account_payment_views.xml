@@ -9,10 +9,7 @@
             <xpath expr="//field[@name='partner_bank_id']" position="after">
                 <field name="mp_grupo_flujo_id" options="{'no_create': True, 'no_open':True}" required="1"/>
             </xpath>
-            
-            <!-- Añadir el campo mp_flujo_ids después del campo communication -->
-            <xpath expr="//field[@name='communication']" position="after">
-                <!-- Corregir el dominio para Many2one -->
+                        <xpath expr="//field[@name='communication']" position="after">
                 <field name="mp_flujo_ids" options="{'no_create': True, 'no_open':True}"
                      domain="[('grupo_flujo_id', '=', mp_grupo_flujo_id)]"
                 /> 
@@ -42,7 +39,7 @@
         <field name="arch" type="xml">
             <xpath expr="//tree" position="inside">
                 <!-- Usar el campo correcto para flujos en facturas -->
-                <field name="mp_flujo_id" widget="one2many"/>
+                <field name="mp_flujo_id" />
                 <field name="mp_grupo_flujo_id"/>
                 <field name="partner_vat" string="RUT"/>
             </xpath>
