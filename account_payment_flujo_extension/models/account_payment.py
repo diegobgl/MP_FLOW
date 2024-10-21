@@ -24,8 +24,8 @@ class AccountPayment(models.Model):
         _logger.info('Creando pago con valores: %s', vals)
 
         # Asignar valores de Flujo y Grupo de Flujo si están en el contexto y no en los vals
-        if 'mp_flujo_id' not in vals and self.env.context.get('default_mp_flujo_id'):
-            vals['mp_flujo_id'] = self.env.context.get('default_mp_flujo_id')
+        if 'mp_flujo_ids' not in vals and self.env.context.get('default_mp_flujo_ids'):
+            vals['mp_flujo_ids'] = [(6, 0, self.env.context.get('default_mp_flujo_ids'))]
         if 'mp_grupo_flujo_id' not in vals and self.env.context.get('default_mp_grupo_flujo_id'):
             vals['mp_grupo_flujo_id'] = self.env.context.get('default_mp_grupo_flujo_id')
 
@@ -34,21 +34,20 @@ class AccountPayment(models.Model):
 
         # Asignar valores al asiento contable si existe
         if payment.move_id:
-            _logger.info('Asignando Flujo y Grupo de Flujo al asiento contable (account.move) del pago %s', payment.id)
+            _logger.info('Asignando Flujos y Grupo de Flujo al asiento contable (account.move) del pago %s', payment.id)
             payment.move_id.sudo().write({
-                'mp_flujo_id': payment.mp_flujo_id.id,
+                'mp_flujo_ids': [(6, 0, payment.mp_flujo_ids.ids)],
                 'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
             })
 
             # Asignar valores a las líneas del asiento contable
             for line in payment.move_id.line_ids:
                 line.sudo().write({
-                    'mp_flujo_id': payment.mp_flujo_id.id,
+                    'mp_flujo_ids': [(6, 0, payment.mp_flujo_ids.ids)],
                     'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                 })
 
         return payment
-
 
     def action_post(self):
         """
@@ -60,15 +59,15 @@ class AccountPayment(models.Model):
             if payment.move_id:  # Asegúrate de que el asiento contable (move_id) existe
                 _logger.info("Asignando Flujo y Grupo de Flujo al asiento contable (account.move) del pago: %s", payment.id)
                 payment.move_id.sudo().write({
-                    'mp_flujo_id': payment.mp_flujo_id.id,
+                    'mp_flujo_ids': [(6, 0, payment.mp_flujo_ids.ids)],
                     'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                 })
 
                 # Asignar también a las líneas del asiento contable
                 for move_line in payment.move_id.line_ids:
-                    _logger.info("Asignando Flujo y Grupo de Flujo a las líneas del asiento contable (account.move.line): %s", move_line.id)
+                    _logger.info("Asignando Flujos y Grupo de Flujo a las líneas del asiento contable (account.move.line): %s", move_line.id)
                     move_line.sudo().write({
-                        'mp_flujo_id': payment.mp_flujo_id.id,
+                        'mp_flujo_ids': [(6, 0, payment.mp_flujo_ids.ids)],
                         'mp_grupo_flujo_id': payment.mp_grupo_flujo_id.id
                     })
             else:
