@@ -81,7 +81,7 @@ class AccountPayment(models.Model):
 class AccountPaymentRegister(models.TransientModel):
     _inherit = 'account.payment.register'
 
-    mp_flujo_ids = fields.Many2many(comodel_name="mp.flujo", string="Flujos", required=True)
+    mp_flujo_id = fields.Many2many(comodel_name="mp.flujo", string="Flujos", required=True)
     mp_grupo_flujo_id = fields.Many2one('mp.grupo.flujo', string="Grupo de Flujo", required=True)
 
     def action_create_payments(self):
@@ -92,7 +92,7 @@ class AccountPaymentRegister(models.TransientModel):
         # Actualizar el contexto con los valores de Flujo y Grupo de Flujo
         ctx = dict(self.env.context)
         ctx.update({
-            'default_mp_flujo_ids': self.mp_flujo_ids.ids,
+            'default_mp_flujo_ids': self.mp_flujo_id.ids,
             'default_mp_grupo_flujo_id': self.mp_grupo_flujo_id.id,
         })
 
