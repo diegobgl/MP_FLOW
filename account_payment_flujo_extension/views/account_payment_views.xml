@@ -24,7 +24,7 @@
         <field name="model">account.payment</field>
         <field name="inherit_id" ref="account.view_account_supplier_payment_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//tree" position="inside">
+            <xpath expr="//tree/field[@name='invoice_partner_display_name']" position="before">
                 <field name="mp_flujo_id"  widget="selection" />
                 <field name="mp_grupo_flujo_id"/>
                 <field name="partner_vat" string="RUT"/>
