@@ -27,7 +27,7 @@
             <xpath expr="//tree" position="inside">
                 <field name="mp_flujo_id"  widget="many2many_tags" />
                 <field name="mp_grupo_flujo_id"/>
-                <field name="partner_vat" string="VAT"/>
+                <field name="partner_vat" string="RUT"/>
             </xpath>
         </field>
     </record>
@@ -38,7 +38,7 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//tree" position="inside">
+            <xpath expr="//tree/field[@name='invoice_partner_display_name']" position="before">
                 <!-- Usar el campo correcto para flujos en facturas -->
                 <field name="mp_flujo_id" domain="[('grupo_flujo_id', '=', mp_grupo_flujo_id)]"  widget="selection" />
                 <field name="mp_grupo_flujo_id"/>
